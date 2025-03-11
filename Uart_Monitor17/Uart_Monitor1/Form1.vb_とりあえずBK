@@ -1,0 +1,250 @@
+﻿Imports System.IO.Ports
+
+Public Class Form1
+
+#Const MNI_ENABLE = 0'1：WMI有 0:WMI無し 
+
+    Const RXRGSZ As Integer = 64
+    'Const RXRGSZ As Integer = 2048
+
+    Structure TYP_COMRING
+        Dim rp As Integer
+        Dim wp As Integer
+        Dim dat() As Byte
+    End Structure
+
+    Structure COM_PORT
+        Dim dvicename As String
+        Dim comno As String
+    End Structure
+
+    Dim RxRing As TYP_COMRING '受信したデータを管理
+    Dim ComInfo() As COM_PORT
+    Dim selectComNo As Integer
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ComboInit() 'Comboboxを初期化する
+        RxRingInit() 'RxRingの初期化を行う
+    End Sub
+
+    'RxRingの初期化を行う
+    Private Sub RxRingInit()
+        RxRing.wp = 0
+        RxRing.rp = 0
+        ReDim RxRing.dat(RXRGSZ - 1)
+    End Sub
+
+    'Comboboxを初期化する
+    Private Sub ComboInit()
+
+#If MNI_ENABLE Then
+        ComPortChk2() 
+#Else
+        ComPortChk() 'ComboBox1の初期化（ポートの検索）
+#End If
+        ComboBox2.Items.Add("9600")
+        ComboBox2.Items.Add("19200")
+        ComboBox2.Items.Add("115200")
+        ComboBox2.Text = "19200"
+    End Sub
+
+    '存在するポートを検索する
+    Private Sub ComPortChk()
+        Dim comno() As String = SerialPort.GetPortNames
+        Dim i As Integer
+
+        ComboBox1.Items.Clear() 'アイテムをクリア
+
+        If comno.Length = 0 Then
+            ComboBox1.Text = "COMポートがみつかりません。"
+        Else
+            For i = 0 To comno.Length - 1
+                ComboBox1.Items.Add(comno(i))
+            Next
+            ComboBox1.Text = comno(0)
+        End If
+
+    End Sub
+
+    '存在するポートを検索する
+    Private Sub ComPortChk2()
+        'Dim mngstr As New Management.ManagementObjectSearcher("Select * from Win32_SerialPort")
+        'Dim mc As Management.ManagementObjectCollection
+        'Dim serial As Management.ManagementBaseObject
+        Dim comno() As String = SerialPort.GetPortNames
+        Dim i, j As Integer
+        Dim serialcnt As Integer
+        Dim comcnt As Integer
+        Dim strno As Byte
+        Dim str As String
+        Dim comstr As String
+
+        'mc = mngstr.Get()
+        'serialcnt = mc.Count
+        comcnt = comno.Length
+        ReDim ComInfo(serialcnt - 1)
+
+        'For Each serial In mc
+        'ComInfo(i).dvicename = serial("Name")
+
+        'strno = InStr(ComInfo(i).dvicename, "(COM")
+        'If strno <> 0 Then
+        'strno += 1
+        'comstr = ""
+        'For j = 0 To 6
+        'str = Mid(ComInfo(i).dvicename, strno + j, 1)
+        'If str <> ")" Then
+        'comstr &= str
+        'Else
+        'Exit For
+        'End If
+        'Next
+        'ComInfo(i).comno = comstr
+        'End If
+
+        'i += 1
+        'Next
+
+        ComboBox1.Items.Clear() 'アイテムをクリア
+
+        If serialcnt = 0 Then
+            ComboBox1.Text = "COMポートがみつかりません。"
+        Else
+            For i = 0 To ComInfo.Length - 1
+                ComboBox1.Items.Add(ComInfo(i).dvicename)
+            Next
+            ComboBox1.Text = ComInfo(0).dvicename
+        End If
+
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+
+#If MNI_ENABLE Then
+        ComPortChk2() '存在するポートを検索する
+#Else
+        ComPortChk() '存在するポートを検索する
+#End If
+
+    End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        PortOpen() 'ポートをオープンする
+    End Sub
+
+    'ポートをオープンする
+    Private Sub PortOpen()
+
+        Try
+            With SerialPort1
+                .Close() 'ポートを閉じる
+
+#If MNI_ENABLE Then
+                .PortName = ComInfo(selectComNo).comno
+#Else
+                .PortName = ComboBox1.Text
+#End If
+                .BaudRate = ComboBox2.Text
+                .DataBits = 8
+                .Parity = Parity.None
+                .StopBits = StopBits.One
+                .Handshake = Handshake.None
+                .RtsEnable = False
+                .DtrEnable = False
+                .Open() 'ポートをオープンする
+            End With
+
+            Timer1.Enabled = True
+        Catch ex As Exception
+            MsgBox(ComboBox1.Text & "をオープンできませんでした。", MsgBoxStyle.OkOnly)
+        End Try
+    End Sub
+
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        SerialWrite()
+    End Sub
+
+    Private Sub SerialWrite()
+
+        If SerialPort1.IsOpen Then
+            SerialPort1.Write(TextBox1.Text)
+        End If
+
+    End Sub
+
+    'Private Sub SerialPort1_DataReceived(sender As Object, e As SerialDataReceivedEventArgs) Handles SerialPort1.DataReceived
+    'While SerialPort1.BytesToRead > 0
+    'Dim receivedByte As Byte = SerialPort1.ReadByte()
+    '        'TextBox2.Text &= "W"
+    '        ' 受信したバイトを処理します
+    '        Console.WriteLine("受信したバイト: " & receivedByte.ToString())
+    '        Console.WriteLine("受信したバイト数: " & SerialPort1.BytesToRead.ToString())
+    'End While
+    'End Sub
+
+    Private Sub SerialPort1_DataReceived(sender As Object, e As SerialDataReceivedEventArgs) Handles SerialPort1.DataReceived
+        Dim sz As Integer = SerialPort1.BytesToRead
+        Dim i As Integer
+        Dim rxdat(sz - 1) As Byte
+
+        SerialPort1.Read(rxdat, 0, sz)
+        Console.WriteLine("受信したバイト数: " & sz.ToString())
+
+
+        For i = 0 To sz - 1
+            RxRingSet(rxdat(i))
+            'RxRingSet(48)
+            Console.WriteLine("受信したバイト: " & rxdat(i).ToString())
+        Next
+
+    End Sub
+
+    'RxRingのwpを更新する
+    Public Sub RxRingSet(ByVal dat)
+
+        RxRing.dat(RxRing.wp) = dat
+
+        RxRing.wp += 1
+        If RxRing.wp = RxRing.dat.Length Then
+            RxRing.wp = 0
+        End If
+    End Sub
+
+    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        Dim sz As Integer
+        Dim i As Integer
+
+        sz = RxRing.wp - RxRing.rp
+
+        If sz < 0 Then
+            sz += RxRing.dat.Length
+        End If
+
+        If sz > 0 Then
+            For i = 0 To sz - 1
+                TextBox2.Text &= Chr(RxRing.dat(RxRing.rp))
+                RingRpAdd()
+            Next
+
+        End If
+
+    End Sub
+
+    'RxRingのrpを更新する
+    Private Sub RingRpAdd()
+
+        RxRing.rp += 1
+        If RxRing.rp >= RxRing.dat.Length Then
+            RxRing.rp = 0
+        End If
+
+    End Sub
+
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+        TextBox2.Clear()
+    End Sub
+
+    Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
+        selectComNo = ComboBox1.SelectedIndex
+    End Sub
+End Class

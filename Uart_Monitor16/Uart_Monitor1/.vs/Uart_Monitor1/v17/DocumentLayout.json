@@ -1,0 +1,57 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\user\\source\\repos\\Uart_Monitor1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0FFB01B4-6E3A-4D34-8B78-EE8155ED7677}|Uart_Monitor1\\Uart_Monitor1.vbproj|c:\\users\\user\\source\\repos\\uart_monitor1\\uart_monitor1\\form1.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}|Form",
+      "RelativeMoniker": "D:0:0:{0FFB01B4-6E3A-4D34-8B78-EE8155ED7677}|Uart_Monitor1\\Uart_Monitor1.vbproj|solutionrelative:uart_monitor1\\form1.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0FFB01B4-6E3A-4D34-8B78-EE8155ED7677}|Uart_Monitor1\\Uart_Monitor1.vbproj|c:\\users\\user\\source\\repos\\uart_monitor1\\uart_monitor1\\form1.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}",
+      "RelativeMoniker": "D:0:0:{0FFB01B4-6E3A-4D34-8B78-EE8155ED7677}|Uart_Monitor1\\Uart_Monitor1.vbproj|solutionrelative:uart_monitor1\\form1.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Form1.vb",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Uart_Monitor1\\Uart_Monitor1\\Form1.vb",
+              "RelativeDocumentMoniker": "Uart_Monitor1\\Form1.vb",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\Uart_Monitor1\\Uart_Monitor1\\Form1.vb*",
+              "RelativeToolTip": "Uart_Monitor1\\Form1.vb*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003361|",
+              "WhenOpened": "2024-10-13T00:02:57.824Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.vb [\u30C7\u30B6\u30A4\u30F3]",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Uart_Monitor1\\Uart_Monitor1\\Form1.vb",
+              "RelativeDocumentMoniker": "Uart_Monitor1\\Form1.vb",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\Uart_Monitor1\\Uart_Monitor1\\Form1.vb [\u30C7\u30B6\u30A4\u30F3]*",
+              "RelativeToolTip": "Uart_Monitor1\\Form1.vb [\u30C7\u30B6\u30A4\u30F3]*",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003361|",
+              "WhenOpened": "2024-10-12T23:31:33.953Z",
+              "EditorCaption": " [\u30C7\u30B6\u30A4\u30F3]"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

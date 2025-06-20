@@ -1,0 +1,41 @@
+#include "xuartps.h"
+
+#define UART_DEVICE_ID XPAR_XUARTPS_0_DEVICE_ID
+
+int main() {
+    XUartPs Uart_Ps;             // UART インスタンス
+    XUartPs_Config *Config;
+    u8 RecvBuffer[6];            // 6バイト格納用の配列
+    int ReceivedCount;
+
+    // UART ドライバの初期化
+    Config = XUartPs_LookupConfig(UART_DEVICE_ID);
+    XUartPs_CfgInitialize(&Uart_Ps, Config, Config->BaseAddress);
+
+    // 必要に応じてボーレートやその他設定をここで行う
+
+    // 6バイト受信
+    ReceivedCount = 0;
+    while (ReceivedCount < 6) {
+        ReceivedCount += XUartPs_Recv(&Uart_Ps, &RecvBuffer[ReceivedCount], 6 - ReceivedCount);
+    }
+
+    // RecvBuffer に6バイト格納完了
+    // ここから先でデータ処理が可能
+
+    return 0;
+}
+
+
+while (ReceivedCount < 6) {
+    ReceivedCount += XUartPs_Recv(&Uart_Ps, &RecvBuffer[ReceivedCount], 6 - ReceivedCount);
+}
+
+
+ということは、6byteと指定しても、3byteで、関数が終わってしまうことがある、ということか？
+
+はい、その通りです！
+XUartPs_Recv() はノンブロッキングな関数なので、受信バッファにあるデータだけを即座に返す仕様です。たとえば、6バイト指定しても、バッファ内に3バイトしか届いていなければ、その3バイトだけを返して関数は終了します。
+だからこそ、このようなコードがよく使われます：
+このループで「まだ受信していないぶんだけを」繰り返し受信し、最終的に6バイトそろうまで粘るわけです。
+通信のタイミング次第では、1バイトずつ分割で入ってくることもあるので、こういった書き方はとても重要なんですよ。必要があれば、割り込み方式でスマートに処理する方法もご案内できますよ！興味ありますか？
